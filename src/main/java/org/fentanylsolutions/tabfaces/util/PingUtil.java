@@ -3,6 +3,7 @@ package org.fentanylsolutions.tabfaces.util;
 import java.net.InetAddress;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.network.EnumConnectionState;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.ServerStatusResponse;
@@ -89,8 +90,9 @@ public class PingUtil {
                 if (profiles != null && profiles.length > 0) {
                     for (GameProfile profile : profiles) {
                         TabFaces.varInstanceClient.clientRegistry.insertProfile(profile, false, -1);
-                        if (profile.getName()
-                            .equals(targetDisplayName)) {
+                        if (profile != null && profile.getName() != null
+                            && profile.getName()
+                                .equals(targetDisplayName)) {
                             targetFound = true;
                         }
                     }
@@ -108,7 +110,15 @@ public class PingUtil {
     }
 
     public static void pingServer(ServerStatusCallback callback, String targetDisplayName) {
-        String[] addressPair = parseAddress(ClientUtil.minecraftInstance.func_147104_D().serverIP);
+        ServerData currentServer = ClientUtil.minecraftInstance.func_147104_D();
+        if (currentServer == null || currentServer.serverIP == null
+            || currentServer.serverIP.trim()
+                .isEmpty()) {
+            TabFaces.debug("Skipping server ping because no current server is available.");
+            return;
+        }
+
+        String[] addressPair = parseAddress(currentServer.serverIP);
 
         try {
             NetworkManager networkManager = NetworkManager

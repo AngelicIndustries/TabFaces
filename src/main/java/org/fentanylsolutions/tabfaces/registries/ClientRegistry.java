@@ -74,6 +74,10 @@ public class ClientRegistry {
         if (profile == null || profile.getName() == null) {
             return;
         }
+        if (isMetadataProfile(profile)) {
+            TabFaces.debug("Skipping formatted server status profile: " + profile.getName());
+            return;
+        }
 
         Data data = getOrCreate(profile.getName(), profile.getId(), removeAfterTTL, ttl);
         synchronized (data) {
@@ -105,6 +109,9 @@ public class ClientRegistry {
 
     public ResourceLocation getServerMenuResourceLocation(String displayName, ServerData serverData,
         boolean removeAfterTTL, int ttl) {
+        if (isMetadataProfileName(displayName)) {
+            return null;
+        }
         if (serverData == null) {
             return getTabMenuResourceLocation(displayName, removeAfterTTL, ttl);
         }
@@ -255,6 +262,14 @@ public class ClientRegistry {
     }
 
     private void maybeSubmitPingTask(String targetDisplayName) {
+        ServerData currentServer = Minecraft.getMinecraft()
+            .func_147104_D();
+        if (currentServer == null || currentServer.serverIP == null
+            || currentServer.serverIP.trim()
+                .isEmpty()) {
+            TabFaces.debug("Skipping server ping because no current server is available.");
+            return;
+        }
         if (System.currentTimeMillis() - lastPingTimestamp <= 5000 || !pingInFlight.compareAndSet(false, true)) {
             return;
         }
@@ -351,6 +366,14 @@ public class ClientRegistry {
         return profile != null && profile.getProperties() != null
             && profile.getProperties()
                 .containsKey("textures");
+    }
+
+    private static boolean isMetadataProfile(GameProfile profile) {
+        return isMetadataProfileName(profile.getName());
+    }
+
+    private static boolean isMetadataProfileName(String name) {
+        return name != null && name.indexOf('\u00A7') >= 0;
     }
 
     private ResourceLocation getDefaultSkin() {

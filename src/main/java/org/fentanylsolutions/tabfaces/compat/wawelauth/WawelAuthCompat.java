@@ -1,8 +1,9 @@
 package org.fentanylsolutions.tabfaces.compat.wawelauth;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
+import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.util.ResourceLocation;
@@ -11,12 +12,13 @@ import org.fentanylsolutions.tabfaces.TabFaces;
 import org.fentanylsolutions.wawelauth.api.WawelFaceRendererClient;
 import org.fentanylsolutions.wawelauth.api.WawelTextureResolver;
 import org.fentanylsolutions.wawelauth.wawelclient.IServerDataExt;
-import org.fentanylsolutions.wawelauth.wawelclient.ServerCapabilities;
 import org.fentanylsolutions.wawelauth.wawelclient.WawelClient;
 import org.fentanylsolutions.wawelauth.wawelclient.data.ClientAccount;
 import org.fentanylsolutions.wawelauth.wawelclient.data.ClientProvider;
 
 public class WawelAuthCompat {
+
+    private static final Set<UUID> CLEARED_EXACT_LOOKUPS = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
     /**
      * Resolve a skin for a player while in-game.
@@ -34,7 +36,7 @@ public class WawelAuthCompat {
                 return null;
             }
             return client.getTextureResolver()
-                .getSkin(uuid, displayName, provider, false);
+                .getSkin(uuid, displayName, effectiveProvider(client, provider), false);
         } catch (Exception e) {
             TabFaces.debug("WawelAuth skin lookup failed for " + displayName + ": " + e.getMessage());
             return null;
@@ -45,9 +47,9 @@ public class WawelAuthCompat {
      * Resolve a skin for a player shown in the server selection tooltip.
      *
      * <ul>
-     * <li>WawelAuth server: try the local auth provider + all advertised fallback providers.</li>
-     * <li>Unknown server with a bound account: use that account's provider.</li>
-     * <li>Unknown server with no bound account: don't fetch (returns null).</li>
+     * <li>Local WawelAuth account: use its exact account provider.</li>
+     * <li>Bound server account: use that exact account provider.</li>
+     * <li>Unknown account/provider: don't fetch (returns null).</li>
      * </ul>
      */
     public static ResourceLocation getSkinForServerTooltip(UUID uuid, String displayName, ServerData serverData) {
@@ -57,26 +59,16 @@ public class WawelAuthCompat {
         }
 
         try {
-            ServerCapabilities capabilities = getCapabilities(serverData);
-
-            if (capabilities != null && capabilities.isWawelAuthAdvertised()) {
-                // WawelAuth server: try all advertised providers
-                List<ClientProvider> providers = buildProvidersFromCapabilities(client, capabilities);
-                if (providers.isEmpty()) {
-                    return null;
-                }
-                return client.getTextureResolver()
-                    .getSkinFromAnyProvider(uuid, displayName, providers);
+            ClientProvider accountProvider = getLocalAccountProvider(client, uuid);
+            if (accountProvider != null) {
+                return getExactSkin(client, uuid, displayName, accountProvider);
             }
 
-            // Unknown server: check if user bound an account to this server
-            ClientProvider boundProvider = getBoundAccountProvider(client, serverData);
+            ClientProvider boundProvider = getBoundAccountProvider(client, serverData, uuid);
             if (boundProvider != null) {
-                return client.getTextureResolver()
-                    .getSkin(uuid, displayName, boundProvider, false);
+                return getExactSkin(client, uuid, displayName, boundProvider);
             }
 
-            // Unknown server, no bound account: don't fetch
             return null;
         } catch (Exception e) {
             TabFaces.debug("WawelAuth server tooltip skin lookup failed for " + displayName + ": " + e.getMessage());
@@ -97,85 +89,38 @@ public class WawelAuthCompat {
     // Internals
     // ------------------------------------------------------------------
 
-    private static ServerCapabilities getCapabilities(ServerData serverData) {
-        if (serverData instanceof IServerDataExt) {
-            return ((IServerDataExt) serverData).getWawelCapabilities();
+    private static ClientProvider getLocalAccountProvider(WawelClient client, UUID uuid) {
+        for (ClientAccount account : client.getAccountManager()
+            .listAccounts()) {
+            if (account != null && uuid.equals(account.getProfileUuid())) {
+                return resolveProviderByName(client, account.getProviderName());
+            }
         }
         return null;
     }
 
-    /**
-     * Build the list of providers a WawelAuth server advertises:
-     * the local auth provider (if supported) plus all accepted fallback providers.
-     */
-    private static List<ClientProvider> buildProvidersFromCapabilities(WawelClient client,
-        ServerCapabilities capabilities) {
-        List<ClientProvider> providers = new ArrayList<>();
-
-        // 1. Local auth provider (the server's own auth)
-        if (capabilities.isLocalAuthSupported()) {
-            try {
-                ClientProvider localProvider = client.getLocalAuthProviderResolver()
-                    .findExisting(capabilities);
-                if (localProvider != null) {
-                    providers.add(localProvider);
-                }
-            } catch (Exception e) {
-                TabFaces.debug("Failed to resolve local auth provider: " + e.getMessage());
-            }
+    private static ResourceLocation getExactSkin(WawelClient client, UUID uuid, String displayName,
+        ClientProvider provider) {
+        if (CLEARED_EXACT_LOOKUPS.add(uuid)) {
+            client.getTextureResolver()
+                .invalidate(uuid);
         }
-
-        // 2. Accepted fallback providers from descriptors
-        for (ServerCapabilities.AcceptedProviderDescriptor descriptor : capabilities.getAcceptedProviders()) {
-            if (descriptor == null) {
-                continue;
-            }
-            ClientProvider resolved = resolveDescriptorToProvider(client, descriptor);
-            if (resolved != null) {
-                providers.add(resolved);
-            }
-        }
-
-        return providers;
+        return client.getTextureResolver()
+            .getSkin(uuid, displayName, provider, false);
     }
 
-    /**
-     * Try to match an accepted provider descriptor to a known ClientProvider.
-     * Falls back to building an ephemeral provider from the descriptor's URLs.
-     */
-    private static ClientProvider resolveDescriptorToProvider(WawelClient client,
-        ServerCapabilities.AcceptedProviderDescriptor descriptor) {
-
-        // Try matching by name first
-        String name = descriptor.getName();
-        if (name != null && !name.trim()
-            .isEmpty()) {
-            ClientProvider byName = client.getProviderRegistry()
-                .getProvider(name);
-            if (byName != null) {
-                return byName;
-            }
+    private static String normalizeString(String value) {
+        if (value == null) {
+            return null;
         }
-
-        // Build an ephemeral provider from the descriptor URLs
-        ClientProvider ephemeral = new ClientProvider();
-        ephemeral.setName(name != null ? name : "ephemeral-tooltip");
-        ephemeral.setApiRoot(descriptor.getApiRoot());
-        ephemeral.setAuthServerUrl(descriptor.getAuthServerUrl());
-        ephemeral.setSessionServerUrl(descriptor.getSessionServerUrl());
-        ephemeral.setServicesUrl(descriptor.getServicesUrl());
-        String publicKey = descriptor.getSignaturePublicKeyBase64();
-        if (publicKey != null && !publicKey.trim()
-            .isEmpty()) {
-            ephemeral.setPublicKeyBase64(publicKey.trim());
-        }
-        return ephemeral;
+        String trimmed = value.trim();
+        return trimmed.isEmpty() ? null : trimmed;
     }
 
     /**
      * Get the provider for the account bound to this server entry, or null.
      */
-    private static ClientProvider getBoundAccountProvider(WawelClient client, ServerData serverData) {
+    private static ClientProvider getBoundAccountProvider(WawelClient client, ServerData serverData, UUID uuid) {
         if (!(serverData instanceof IServerDataExt)) {
             return null;
         }
@@ -191,13 +136,35 @@ public class WawelAuthCompat {
         if (account == null) {
             return null;
         }
-
-        String providerName = account.getProviderName();
-        if (providerName == null || providerName.trim()
-            .isEmpty()) {
+        if (uuid != null && !uuid.equals(account.getProfileUuid())) {
             return null;
         }
 
-        return client.resolveProviderByName(providerName);
+        return resolveProviderByName(client, account.getProviderName());
+    }
+
+    private static ClientProvider resolveProviderByName(WawelClient client, String providerName) {
+        String name = normalizeString(providerName);
+        if (name == null) {
+            return null;
+        }
+
+        ClientProvider exact = client.resolveProviderByName(name);
+        if (exact != null) {
+            return effectiveProvider(client, exact);
+        }
+
+        for (ClientProvider provider : client.getProviderRegistry()
+            .listProviders()) {
+            if (provider != null && name.equalsIgnoreCase(normalizeString(provider.getName()))) {
+                return effectiveProvider(client, provider);
+            }
+        }
+        return null;
+    }
+
+    private static ClientProvider effectiveProvider(WawelClient client, ClientProvider provider) {
+        return client.getProviderRegistry()
+            .applyRuntimeOverrides(provider);
     }
 }
