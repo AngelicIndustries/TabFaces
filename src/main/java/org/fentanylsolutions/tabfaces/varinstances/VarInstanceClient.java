@@ -5,7 +5,6 @@ import net.minecraft.util.ResourceLocation;
 
 import org.fentanylsolutions.tabfaces.TabFaces;
 import org.fentanylsolutions.tabfaces.registries.ClientRegistry;
-import org.fentanylsolutions.tabfaces.registries.PlayerProfileRegistry;
 import org.fentanylsolutions.tabfaces.util.Util;
 
 import com.mojang.authlib.minecraft.MinecraftSessionService;
@@ -13,7 +12,6 @@ import com.mojang.authlib.minecraft.MinecraftSessionService;
 public class VarInstanceClient {
 
     public ClientRegistry clientRegistry = new ClientRegistry();
-    public PlayerProfileRegistry playerProfileRegistry = new PlayerProfileRegistry();
     /*
      * public int u = 0;
      * public int v = 0;

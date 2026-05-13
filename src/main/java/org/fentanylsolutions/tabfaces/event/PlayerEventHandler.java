@@ -27,7 +27,6 @@ public class PlayerEventHandler {
         }
 
         TabFaces.varInstanceClient.clientRegistry.clear();
-        TabFaces.varInstanceClient.playerProfileRegistry.clear();
     }
 
     @SuppressWarnings("unused")
@@ -44,7 +43,6 @@ public class PlayerEventHandler {
         }
 
         TabFaces.varInstanceClient.clientRegistry.clear();
-        TabFaces.varInstanceClient.playerProfileRegistry.clear();
     }
 
     boolean wasKeyDown = false;

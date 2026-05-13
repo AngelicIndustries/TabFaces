@@ -88,8 +88,7 @@ public class PingUtil {
                 boolean targetFound = false;
                 if (profiles != null && profiles.length > 0) {
                     for (GameProfile profile : profiles) {
-                        TabFaces.varInstanceClient.clientRegistry
-                            .insertOrUpdateFromPing(profile.getName(), profile.getId(), false, -1);
+                        TabFaces.varInstanceClient.clientRegistry.insertProfile(profile, false, -1);
                         if (profile.getName()
                             .equals(targetDisplayName)) {
                             targetFound = true;
