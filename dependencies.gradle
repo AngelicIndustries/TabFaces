@@ -45,6 +45,7 @@ dependencies {
     compileOnly("com.github.GTNewHorizons:ServerUtilities:2.2.18:dev")
     compileOnly("org.fentanylsolutions.fentlib:FentLib:087af36-snapshot:dev")
     compileOnly("org.fentanylsolutions.wawelauth:WawelAuth:1.0.0:dev")
+    // runtimeOnlyNonPublishable(rfg.deobf("customskinloader:CustomSkinLoader:1.7.10-14.6a"))
 
     if (useSkinport) {
         api(rfg.deobf("curse.maven:skinport-234948:3212017"))
