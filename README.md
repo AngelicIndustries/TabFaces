@@ -53,7 +53,7 @@ If you use the debug config to add a team to all members (to test width handling
 
 ## License
 
-`LgplV3 + SNEED`.
+`LGPLv3`.
 
 ## Buy me a coffee
 
@@ -62,4 +62,4 @@ If you use the debug config to add a team to all members (to test width handling
 
 <br>
 
-![license](images/lgplsneed_small.png)
+![license](images/license_small.png)
