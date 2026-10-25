@@ -4,11 +4,11 @@
 
 Display player faces in the server tab menu, in the chat, and the server population info tooltip.
 
-[![hub](images/badges/github.png)](https://github.com/JackOfNoneTrades/TabFaces/releases)
+[![hub](images/badges/github.png)](https://github.com/AngelicIndustries/TabFaces/releases)
 [![modrinth](images/badges/modrinth.png)](https://modrinth.com/mod/tabfaces)
 [![curse](images/badges/curse.png)](https://www.curseforge.com/minecraft/mc-mods/tabfaces)
-[![67](images/badges/67.png)](https://67.fentanylsolutions.org/mod/tabfaces)
-[![maven](images/badges/maven.png)](https://maven.fentanylsolutions.org/#/releases/org/fentanylsolutions/tabfaces/TabFaces)
+[![67](images/badges/67.png)](https://67minecraft.com/mod/tabfaces)
+[![maven](images/badges/maven.png)](https://maven.angelic.industries/#/releases/industries/angelic/tabfaces/TabFaces)
 ![forge](images/badges/forge.png)
 [![cord](images/badges/cord.png)](https://discord.gg/xAWCqGrguG)
 
@@ -21,7 +21,7 @@ Display player faces in the server tab menu, in the chat, and the server populat
 * As of version 1.0.2, [UniMixins](https://modrinth.com/mod/unimixins) [![curse](images/icons/curse.png)](https://www.curseforge.com/minecraft/mc-mods/unimixins) [![modrinth](images/icons/modrinth.png)](https://modrinth.com/mod/unimixins/versions) [![git](images/icons/git.png)](https://github.com/LegacyModdingMC/UniMixins/releases) is a required dependency.
 * Prior to version 1.0.10, [CarbonConfig](https://modrinth.com/mod/carbon-config) [![curse](images/icons/curse.png)](https://www.curseforge.com/minecraft/mc-mods/carbon-config) [![modrinth](images/icons/modrinth.png)](https://modrinth.com/mod/carbon-config) [![git](images/icons/git.png)](https://github.com/Carbon-Config-Project/CarbonConfig) is a required dependency.
 * As of version 1.0.9, [SkinPort](https://www.curseforge.com/minecraft/mc-mods/skinport) [![curse](images/icons/curse.png)](https://www.curseforge.com/minecraft/mc-mods/skinport) [![git](images/icons/git.png)](https://github.com/zlainsama/SkinPort) is an optional dependency and has added compat.
-* As of version 1.0.16, [FentLib](https://www.curseforge.com/minecraft/mc-mods/fentlib) [![curse](images/icons/curse.png)](https://www.curseforge.com/minecraft/mc-mods/fentlib) [![modrinth](images/icons/modrinth.png)](https://modrinth.com/mod/fentlib) [![67](images/icons/67.png)](https://67.fentanylsolutions.org/mod/fentlib) [![git](images/icons/git.png)](https://github.com/JackOfNoneTrades/FentLib) is an optional dependency and provides modern + HD skin compat.
+* [AngelLib](https://www.curseforge.com/minecraft/mc-mods/angellib) [![curse](images/icons/curse.png)](https://www.curseforge.com/minecraft/mc-mods/angellib) [![modrinth](images/icons/modrinth.png)](https://modrinth.com/mod/angellib) [![67](images/icons/67.png)](https://67minecraft.com/mod/angellib) [![git](images/icons/git.png)](https://github.com/AngelicIndustries/AngelLib) is an optional dependency and provides modern + HD skin compat.
 
 ## Incompatibilities
 * Better Ping Display is not compatible.
@@ -41,7 +41,7 @@ Display player faces in the server tab menu, in the chat, and the server populat
 
 ### Will this work with [insert auth mod]?
 
-It should work on all online servers. Tested on a clean server and one treated with [authlib-injector](https://github.com/yushijinhun/authlib-injector). Has compatibility with Wawel Auth [![curse](images/icons/curse.png)](https://www.curseforge.com/minecraft/mc-mods/wawel-auth) [![modrinth](images/icons/modrinth.png)](https://modrinth.com/mod/wawel-auth) [![67](images/icons/67.png)](https://67.fentanylsolutions.org/mod/wawel-auth) [![git](images/icons/git.png)](https://github.com/JackOfNoneTrades/WawelAuth) as well.
+It should work on all online servers. Tested on a clean server and one treated with [authlib-injector](https://github.com/yushijinhun/authlib-injector). Has compatibility with Wawel Auth [![curse](images/icons/curse.png)](https://www.curseforge.com/minecraft/mc-mods/wawel-auth) [![modrinth](images/icons/modrinth.png)](https://modrinth.com/mod/wawel-auth) [![67](images/icons/67.png)](https://67minecraft.com/mod/wawel-auth) [![git](images/icons/git.png)](https://github.com/AngelicIndustries/WawelAuth) as well.
 
 ### Misc
 

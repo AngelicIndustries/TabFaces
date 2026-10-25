@@ -2,6 +2,6 @@
 
 repositories {
     maven {
-        url "https://maven.fentanylsolutions.org/releases"
+        url "https://maven.angelic.industries/releases"
     }
 }

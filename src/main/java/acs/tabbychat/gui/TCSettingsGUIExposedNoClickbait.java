@@ -2,12 +2,11 @@ package acs.tabbychat.gui;
 
 import net.minecraft.client.gui.GuiButton;
 
-import org.fentanylsolutions.tabfaces.Config;
-import org.fentanylsolutions.tabfaces.access.IMixinTCSettingSlider;
-import org.fentanylsolutions.tabfaces.access.IMixinTabbyChat;
-import org.fentanylsolutions.tabfaces.compat.tabbychat.TabFacesSettings;
-
 import acs.tabbychat.core.TabbyChat;
+import industries.angelic.tabfaces.Config;
+import industries.angelic.tabfaces.access.IMixinTCSettingSlider;
+import industries.angelic.tabfaces.access.IMixinTabbyChat;
+import industries.angelic.tabfaces.compat.tabbychat.TabFacesSettings;
 
 public class TCSettingsGUIExposedNoClickbait extends TCSettingsGUI {
 

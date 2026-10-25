@@ -12,8 +12,8 @@ pluginManagement {
         }*/
         maven {
             // RetroFuturaGradle
-            name = "Fentanyl Solutions Maven"
-            url = uri("https://maven.fentanylsolutions.org/releases/")
+            name = "Angelic Maven"
+            url = uri("https://maven.angelic.industries/releases/")
             mavenContent {
                 includeGroup("com.gtnewhorizons")
                 includeGroupByRegex("com\\.gtnewhorizons\\..+")

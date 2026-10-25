@@ -1,7 +1,7 @@
 {
   "required": true,
   "minVersion": "0.8.7-GTNH",
-  "package": "org.fentanylsolutions.tabfaces.mixins.mid",
+  "package": "industries.angelic.tabfaces.mixins.mid",
   "refmap": "mixins.tabfaces.refmap.json",
   "target": "@env(DEFAULT)",
   "compatibilityLevel": "JAVA_8",

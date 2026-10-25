@@ -5,7 +5,7 @@
       "description": "Mod backporting player faces in the tab menu.",
       "version": "${modVersion}",
       "mcversion": "${minecraftVersion}",
-      "url": "https://github.com/JackOfNoneTrades/TabFaces",
+      "url": "https://github.com/AngelicIndustries/TabFaces",
       "updateUrl": "",
       "authorList": ["jack"],
       "credits": "",

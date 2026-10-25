@@ -1,0 +1,51 @@
+package industries.angelic.tabfaces;
+
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
+import cpw.mods.fml.common.event.FMLServerStartedEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.common.event.FMLServerStoppedEvent;
+import cpw.mods.fml.common.event.FMLServerStoppingEvent;
+import industries.angelic.tabfaces.command.CommandDebugCleanup;
+import industries.angelic.tabfaces.command.CommandTest;
+import industries.angelic.tabfaces.compat.LoadedMods;
+import industries.angelic.tabfaces.util.ServerDebugUuidProvider;
+import industries.angelic.tabfaces.util.Util;
+
+public class CommonProxy {
+
+    // preInit "Run before anything else. Read your config, create blocks, items, etc, and register them with the
+    // GameRegistry."
+    public void preInit(FMLPreInitializationEvent event) {
+        TabFaces.info("TabFaces version " + Tags.VERSION + " running on " + (Util.isServer() ? "Server" : "Client"));
+        LoadedMods.init();
+        Config.loadConfig(TabFaces.confFile);
+        if (Util.isServer()) {
+            ServerDebugUuidProvider.ensureDebugFileExists();
+        }
+    }
+
+    public void init(FMLInitializationEvent event) {}
+
+    public void postInit(FMLPostInitializationEvent event) {}
+
+    public void serverStarting(FMLServerStartingEvent event) {
+        if (Util.isServer()) {
+            if (TabFaces.isDebuggingEnabled()) {
+                TabFaces.LOG.info("TabFaces registering Test and Cleanup commands");
+                event.registerServerCommand(new CommandTest());
+                event.registerServerCommand(new CommandDebugCleanup());
+            }
+        }
+    }
+
+    public void serverAboutToStart(FMLServerAboutToStartEvent event) {}
+
+    public void serverStarted(FMLServerStartedEvent event) {}
+
+    public void serverStopping(FMLServerStoppingEvent event) {}
+
+    public void serverStopped(FMLServerStoppedEvent event) {}
+}
