@@ -37,5 +37,12 @@ jobs:
           distribution: zulu
           java-version: 17
 
+      - name: Fetch the OvermindDL1 mirror from the Angelic Maven
+        # gtnhgradle adds https://gregtech.overminddl1.com/, which often times out on GitHub's runners; maven.angelic.industries mirrors it
+        shell: bash
+        run: |
+          mkdir -p ~/.gradle/init.d
+          curl -fsSL --retry 3 -o ~/.gradle/init.d/angelic-mirror.gradle https://raw.githubusercontent.com/AngelicIndustries/mod-workflows/v1/gradle/angelic-mirror.init.gradle
+
       - name: Publish to 67minecraft
         run: ./gradlew clean publish67Minecraft --no-configuration-cache --build-cache --info --stacktrace -x test
